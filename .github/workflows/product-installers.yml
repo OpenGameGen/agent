@@ -1,0 +1,105 @@
+name: Product installers
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: product-installers-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  package:
+    name: Installer / ${{ matrix.target }}
+    timeout-minutes: 120
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: mac-arm64
+            runner: macos-15
+            extension: dmg
+          - target: mac-x64
+            runner: macos-15-intel
+            extension: dmg
+          - target: win-x64
+            runner: windows-2022
+            extension: exe
+    runs-on: ${{ matrix.runner }}
+    defaults:
+      run:
+        shell: pwsh
+    env:
+      DSH_TELEMETRY_DISABLED: '1'
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - uses: pnpm/action-setup@v5.0.0
+      - uses: actions/setup-node@v7.0.0
+        with:
+          node-version: '24'
+          cache: pnpm
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Install locked dependencies
+        run: |
+          pnpm install --frozen-lockfile
+          exit $LASTEXITCODE
+      - name: Prepare artifact build version and Windows settings
+        id: settings
+        run: |
+          @'
+          import { readFileSync, writeFileSync, appendFileSync } from 'node:fs';
+          import { desktopBuildVersionPrefix, validateDesktopBuildVersion } from './apps/desktop/scripts/desktop-build-version.mjs';
+          const product = JSON.parse(readFileSync('apps/desktop/package.json', 'utf8')).version;
+          const date = new Date().toISOString().slice(0, 10).replaceAll('-', '');
+          const version = validateDesktopBuildVersion(`${desktopBuildVersionPrefix(product)}${date}.${process.env.GITHUB_RUN_NUMBER}.${process.env.GITHUB_RUN_ATTEMPT}`, product);
+          appendFileSync(process.env.GITHUB_OUTPUT, `version=${version}\n`);
+          if (process.platform === 'win32') writeFileSync('apps/desktop/.env.windows', 'DSH_DESKTOP_APP_ID=com.opengamegen.desktop\nOPENGAME_UPDATE_MODE=disabled\n', { flag: 'wx' });
+          appendFileSync(process.env.GITHUB_STEP_SUMMARY, `Unsigned installer\n\nVersion: ${version}\n\nCommit: ${process.env.GITHUB_SHA}\n`);
+          '@ | node --input-type=module
+          exit $LASTEXITCODE
+      - name: Check packaging configuration and toolchain
+        run: |
+          pnpm --dir apps/desktop run package ${{ matrix.target }} --unsigned --check --build-version '${{ steps.settings.outputs.version }}'
+          exit $LASTEXITCODE
+      - name: Build installer and verify packaged runtime
+        run: |
+          pnpm --dir apps/desktop run package ${{ matrix.target }} --unsigned --build-version '${{ steps.settings.outputs.version }}' 2>&1 |
+            Tee-Object -FilePath "$env:RUNNER_TEMP/product-package.log"
+          $packageExit = $LASTEXITCODE
+          if ($packageExit -ne 0) {
+            $detail = (Get-Content -LiteralPath "$env:RUNNER_TEMP/product-package.log" -Tail 60) -join "`n"
+            $detail = $detail.Replace('%', '%25').Replace("`r", '%0D').Replace("`n", '%0A')
+            Write-Output "::error title=Installer packaging failed::$detail"
+          }
+          exit $packageExit
+      - name: Upload installer
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: opengamegen-${{ matrix.target }}-unsigned-${{ steps.settings.outputs.version }}-${{ github.sha }}
+          path: apps/desktop/.desktop-build/targets/${{ matrix.target }}/unsigned-artifacts/*.${{ matrix.extension }}
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 14
+      - name: Upload packaging diagnostics
+        if: always()
+        uses: actions/upload-artifact@v7.0.1
+        with:
+          name: opengamegen-${{ matrix.target }}-logs-${{ github.run_id }}-${{ github.run_attempt }}
+          path: apps/desktop/.desktop-build/packaging-runs/
+          include-hidden-files: true
+          if-no-files-found: warn
+          retention-days: 14
+      - name: Remove generated Windows settings
+        if: always() && runner.os == 'Windows'
+        run: |
+          if (Test-Path -LiteralPath apps/desktop/.env.windows) {
+            Remove-Item -LiteralPath apps/desktop/.env.windows
+          }

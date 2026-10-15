@@ -1,0 +1,1 @@
+export function createProductUpdateFeed(options: { archive: string; version: string; target: string; tag: string; previousVersion?: string }): Promise<{ filename: string; info: { version: string; files: [{ url: string; sha512: string; size: number }]; path: string; sha512: string; releaseDate: string } }>

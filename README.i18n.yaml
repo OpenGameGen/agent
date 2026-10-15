@@ -1,0 +1,22 @@
+# Bilingual-pair consistency record for README.md (docs/i18n/README.md): per heading
+# section, a hash of its English and Chinese blocks outside code blocks and generated regions.
+# After editing either side, bring the other along and re-record with:
+#   pnpm run verify-translation-pairing --write README.md
+/opengamegen:
+  en: 28e146cae6f34e02
+  zh: 8c238c31d4ec457e
+/opengamegen/capabilities:
+  en: b91c317632d0d16a
+  zh: 2e08f57e237a9e5d
+/opengamegen/installation:
+  en: 8f9d4bab0ce756ee
+  zh: 250bb3f2c8eab475
+/opengamegen/source-development:
+  en: fc8c83fd8a7eb19f
+  zh: 732e55e70fcc657d
+/opengamegen/architecture-and-contributions:
+  en: fef5ce81fa69e729
+  zh: 420e4ae9c84306d2
+/opengamegen/license-and-acknowledgements:
+  en: c24843d0037e0405
+  zh: d91e50d71c86a4da

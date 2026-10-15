@@ -1,0 +1,6 @@
+The environment manager is part of the product source. It downloads independently licensed tools; no Blender binary is embedded here.
+Blender: GNU General Public License, https://www.blender.org/about/license/
+Official releases and source: https://download.blender.org/release/Blender4.5/
+Node.js and Python: licenses delivered in the existing primary-runtime payload.
+npm: Artistic License 2.0, https://github.com/npm/cli/blob/v11.6.2/LICENSE
+Godot: existing resources/godot/LICENSE.txt and downloaded release license.

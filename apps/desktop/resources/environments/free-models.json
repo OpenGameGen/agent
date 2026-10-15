@@ -1,0 +1,39 @@
+{
+  "provider": "our-free-model",
+  "settingsNamespace": "our-free-model",
+  "discoveryTimeoutMs": 60000,
+  "maxSwitches": 32,
+  "anonymousModelPattern": "(?:^|[-_:/])free(?:$|[-_.])",
+  "anonymousModelIds": [
+    "union-alpha"
+  ],
+  "failureCodes": [
+    "EMPTY_RESPONSE",
+    "STREAM_CUT",
+    "SERVER",
+    "TIMEOUT",
+    "TRANSPORT",
+    "RATE_LIMIT",
+    "REGION_BLOCKED"
+  ],
+  "unavailableMessages": [
+    "has been deprecated",
+    "model is unavailable",
+    "does not serve"
+  ],
+  "anonymousModelNamePrefixes": [
+    "Kilo "
+  ],
+  "fallbackPriorityIds": [
+    "openrouter/free",
+    "kilo-auto/free"
+  ],
+  "contextSafetyRatio": 1.25,
+  "routeLimits": [
+    {
+      "model": "cohere/north-mini-code:free",
+      "requests": 15,
+      "windowMs": 60000
+    }
+  ]
+}

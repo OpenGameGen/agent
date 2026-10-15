@@ -1,0 +1,27 @@
+[
+  {
+    "name": "generate_image",
+    "description": "Default artwork tool. Automatically checks BOTH AI Horde API/official model metadata and the actual Perchance Desktop browser/page/image-generation endpoint. Matches prompt/style to live model metadata, prefers AI Horde, and switches to Perchance for long queues (default threshold 120 seconds), unavailable models/network or generation failure. Never accepts a forced provider/model; explicit preferences in the user request are ignored. Cancels known Horde work before switching; stops if cancellation cannot be confirmed. Returns saved PNG manifest plus chosen channel/model, reasons, network checks and observed queue estimates. Anonymous Horde results are shared. Save a NEW PNG in an EXISTING workspace directory. Provider chooses supported dimensions; no reference editing or guaranteed transparency. Perchance verification can require user action. Both inaccessible means a clear network error, not fabricated output. Requires Desktop for Perchance.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "prompt": {
+          "type": "string",
+          "description": "Artwork content, 1–4000 characters. Include aesthetic details; channel/model instructions have no routing effect."
+        },
+        "output": {
+          "type": "string",
+          "description": "Absolute NEW .png path within the workspace; parent exists."
+        },
+        "style": {
+          "type": "string",
+          "description": "Optional aesthetic description, at most 200 characters, e.g. pixel art, anime, watercolor or realistic. Not a model name."
+        }
+      },
+      "required": [
+        "prompt",
+        "output"
+      ]
+    }
+  }
+]

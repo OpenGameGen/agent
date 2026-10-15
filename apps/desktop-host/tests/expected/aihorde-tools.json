@@ -1,0 +1,109 @@
+[
+  {
+    "name": "aihorde_list_models",
+    "description": "Query current AI Horde image models before generating. Returns exact model names, online worker counts, queued job counts and queueClearEstimateSeconds. That estimate is for clearing the MODEL queue, not your personal wait; null means unavailable, zero is not a guarantee of immediate generation. Online workers may be busy or incompatible with your dimensions. Choose by desired style and availability; then use aihorde_image_request submit/status/save. No generation is submitted by this read-only query.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "search": {
+          "type": "string",
+          "description": "Optional case-insensitive model name substring."
+        },
+        "online_only": {
+          "type": "boolean",
+          "description": "Default true: include only models with online workers."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "1–500, default 100; response marks truncation."
+        }
+      }
+    }
+  },
+  {
+    "name": "aihorde_image_request",
+    "description": "Track AI Horde image generation without blocking the agent while queued. First call aihorde_list_models, choose an exact suitable online model, then submit with prompt/output/model and optional dimensions/steps. submit returns request_id immediately; retain it. status reads waiting/processing/finished, estimatedWaitSeconds, queuePosition, eligibleWorkers and mightStall. Wait estimate and position are HORDE-WIDE, not limited to eligible workers; no completion guarantee. Check no more often than every 3 seconds and do useful work between checks. When done, save writes the PNG to the submitted output; cancel stops unwanted work. Only requests submitted by this tool in this session are accepted. Pending requests are cancelled on plugin unload; no restart persistence. Anonymous results are shared and have lowest priority. Keys are local AI_HORDE_API_KEY, never tool arguments.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "action": {
+          "type": "string",
+          "enum": [
+            "submit",
+            "status",
+            "save",
+            "cancel"
+          ]
+        },
+        "request_id": {
+          "type": "string",
+          "description": "Required for status/save/cancel; ID returned by submit."
+        },
+        "prompt": {
+          "type": "string",
+          "description": "Required for submit, 1–4000 characters."
+        },
+        "output": {
+          "type": "string",
+          "description": "Required for submit: absolute NEW .png in an existing workspace directory."
+        },
+        "model": {
+          "type": "string",
+          "description": "Exact name from aihorde_list_models; omitted uses stable_diffusion."
+        },
+        "width": {
+          "type": "integer",
+          "description": "Submit only: multiple of 64, 256–1024; default 512."
+        },
+        "height": {
+          "type": "integer",
+          "description": "Submit only: multiple of 64, 256–1024; default 512."
+        },
+        "steps": {
+          "type": "integer",
+          "description": "Submit only: 1–50, default 20."
+        }
+      },
+      "required": [
+        "action"
+      ]
+    }
+  },
+  {
+    "name": "aihorde_generate_image",
+    "description": "Generate one raster artwork through the official AI Horde community API and save a NEW PNG inside an EXISTING workspace directory. Sends your prompt to community workers. Anonymous by default: low queue priority, high-load restrictions, and anonymous images are shared by the service. Optional local AI_HORDE_API_KEY improves account priority; never pass keys in tool arguments. Supports prompt, model, width, height and steps. Call aihorde_list_models before choosing a model. For observable progress prefer aihorde_image_request submit/status/save instead. May take minutes; cancellation/timeout attempts to cancel queued work. Returns actual dimensions, worker model, seed, sharing flag and SHA-256. Inspect with read_image before using in a game. No reference-image editing or guaranteed transparency.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "prompt": {
+          "type": "string",
+          "description": "Image description, 1–4000 characters; optionally append ### negative prompt."
+        },
+        "output": {
+          "type": "string",
+          "description": "Absolute NEW .png path in the workspace; parent directory must exist."
+        },
+        "model": {
+          "type": "string",
+          "description": "Optional exact AI Horde model name; omitted uses the service default stable_diffusion."
+        },
+        "width": {
+          "type": "integer",
+          "description": "256–1024, multiple of 64; default 512."
+        },
+        "height": {
+          "type": "integer",
+          "description": "256–1024, multiple of 64; default 512."
+        },
+        "steps": {
+          "type": "integer",
+          "description": "1–50; default 20. Larger requests may require kudos."
+        }
+      },
+      "required": [
+        "prompt",
+        "output"
+      ]
+    }
+  }
+]

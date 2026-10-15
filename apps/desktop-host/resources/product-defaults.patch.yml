@@ -1,0 +1,64 @@
+# Product defaults precede profile/home overrides; exact anonymous route only.
+- id: compaction-basic
+  config:
+    modelPolicies:
+      - provider: our-free-model
+        model: nemotron-3.5-lightning-free
+        headroomTokens: 16384
+        maxTokens: 8192
+- preset: preset-standard
+  id: compaction-basic
+  config:
+    modelPolicies:
+      - provider: our-free-model
+        model: nemotron-3.5-lightning-free
+        headroomTokens: 16384
+        maxTokens: 8192
+
+# Product desktop hides the left navigation and starts with the right workspace closed.
+- id: ui-layout
+  config:
+    sidebarInitiallyCollapsed: true
+- id: ui-sidebar-right
+  config:
+    initiallyExpanded: false
+
+# Product users use the backend default preset without a mode-selection surface.
+- id: ui-agent-preset
+  disabled: true
+
+# Product requests do not contribute Session logs or expose an upload preference.
+- id: session-log-deepseek
+  disabled: true
+  config:
+    enabled: false
+- id: ui-settings-session-log
+  disabled: true
+
+- id: ui-conversation
+  config:
+    heroPlaceholders:
+      - '例如：做一个收集金币、躲避障碍的像素跑酷游戏'
+      - '例如：做一个有背包和装备系统的地牢冒险游戏'
+      - '例如：做一个种菜、养动物的农场经营游戏'
+      - '例如：做一个支持双人对战的坦克游戏'
+
+# Independent product occupants replace official sidebar artwork.
+- id: ui-brand-official
+  disabled: true
+- insert:
+    - id: ui-brand-product
+      name: '@deepseek-ai/dsh-client-ui-brand-product'
+
+# Engine choices use independent presets while keeping upstream Standard intact.
+- id: agent-preset-registry
+  config:
+    default: general
+- insert:
+    - id: ui-engine-product
+      name: '@deepseek-ai/dsh-client-ui-engine-product'
+
+# Desktop product settings, alongside other product UI occupants.
+- insert:
+    - id: product-environment-settings
+      name: '@deepseek-ai/dsh-client-ui-product-environments'

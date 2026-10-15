@@ -1,0 +1,13 @@
+{
+  "runtime": {
+    "repository": "https://github.com/Erodenn/godot-mcp-runtime",
+    "commit": "04925002e227749048bd95274c5bdb0c929bb8c4",
+    "adaptation": "Control traversal in game-bridge.gd; screenshot transport replaced by Electron"
+  },
+  "vollkorn": {
+    "repository": "https://github.com/Vollkorn-Games/godot-mcp",
+    "commit": "632530638448ea3e79394fbf74e9a5c92c4b67e5",
+    "adaptation": "Subscribe-before-input test sequence design; implementation uses browser input"
+  },
+  "time": "Independent bounded SceneTree pause/advance implementation; no determinism claim"
+}

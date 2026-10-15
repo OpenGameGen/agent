@@ -1,0 +1,12 @@
+# Profile-free default user terminals preserve managed runtime selection.
+# Other discovered shells remain available for users who choose their own configuration.
+- id: terminal-controller
+  config:
+    shell: !!js "process.platform === 'win32' ? { path: 'cmd.exe', name: 'Agent cmd', args: ['/d', '/q'] } : { path: '/bin/bash', name: 'Agent bash', args: ['--noprofile', '--norc', '-i'] }"
+
+# Product-owned anonymous lane. Package bytes are pinned by the CLI distribution dependency.
+- insert:
+    - id: our-free-model
+      name: dsh-our-free-model
+      config:
+        distribution: managed

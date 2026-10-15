@@ -1,0 +1,872 @@
+[
+  {
+    "name": "godot_resource_create",
+    "description": "Create one native Godot resource without overwriting an existing file. Use file tools for project.godot and .gd; use scene/node tools for .tscn. Call load_godot_runtime first. No GUI or project plugin.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "project": {
+          "type": "string",
+          "description": "Absolute directory containing project.godot."
+        },
+        "path": {
+          "type": "string",
+          "description": "Project-relative .tres path, e.g. materials/player.tres. Parent directory must exist."
+        },
+        "type": {
+          "type": "string",
+          "description": "Instantiable built-in Resource class, e.g. StandardMaterial3D, Theme, Curve, Gradient, Animation, TileSet or RectangleShape2D."
+        }
+      },
+      "required": [
+        "project",
+        "path",
+        "type"
+      ]
+    }
+  },
+  {
+    "name": "godot_resource_inspect",
+    "description": "Read native resource properties, types and current values from disk, including animation track indices and TileSet source ids. No retained resource cache; inspect before changing a property.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "project": {
+          "type": "string",
+          "description": "Absolute directory containing project.godot."
+        },
+        "path": {
+          "type": "string",
+          "description": "Project-relative .tres path, e.g. materials/player.tres. Parent directory must exist."
+        },
+        "subresource": {
+          "type": "string",
+          "description": "Optional colon-separated resource property chain, e.g. gradient or material:next_pass. Inspect first. Empty means the root resource."
+        }
+      },
+      "required": [
+        "project",
+        "path"
+      ]
+    }
+  },
+  {
+    "name": "godot_resource_set",
+    "description": "Set and save ONE stored resource property using a Godot literal. Engine validates the property type. Use godot_resource_reference for resource links. No objects or large JSON edits.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "project": {
+          "type": "string",
+          "description": "Absolute directory containing project.godot."
+        },
+        "path": {
+          "type": "string",
+          "description": "Project-relative .tres path, e.g. materials/player.tres. Parent directory must exist."
+        },
+        "subresource": {
+          "type": "string",
+          "description": "Optional colon-separated resource property chain, e.g. gradient or material:next_pass. Inspect first. Empty means the root resource."
+        },
+        "property": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string",
+          "description": "One Godot literal: 1.5, true, \"text\", Vector2(1, 2), Color(1, 0, 0, 1). Quote strings. For asset paths use the matching *_reference tool, not value. No code or batch JSON."
+        }
+      },
+      "required": [
+        "project",
+        "path",
+        "property",
+        "value"
+      ]
+    }
+  },
+  {
+    "name": "godot_resource_reference",
+    "description": "Assign one resource property to an existing native resource or imported texture. Engine checks reference class. Reloads dependencies from disk.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "project": {
+          "type": "string",
+          "description": "Absolute directory containing project.godot."
+        },
+        "path": {
+          "type": "string",
+          "description": "Project-relative .tres path, e.g. materials/player.tres. Parent directory must exist."
+        },
+        "subresource": {
+          "type": "string",
+          "description": "Optional colon-separated resource property chain, e.g. gradient or material:next_pass. Inspect first. Empty means the root resource."
+        },
+        "property": {
+          "type": "string"
+        },
+        "reference": {
+          "type": "string",
+          "description": "Existing project-relative resource or imported asset path."
+        }
+      },
+      "required": [
+        "project",
+        "path",
+        "property",
+        "reference"
+      ]
+    }
+  },
+  {
+    "name": "godot_curve_point",
+    "description": "Add one point to a Curve. x/y must fit its domain/value range; inspect and set those properties first if needed.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "project": {
+          "type": "string",
+          "description": "Absolute directory containing project.godot."
+        },
+        "path": {
+          "type": "string",
+          "description": "Project-relative .tres path, e.g. materials/player.tres. Parent directory must exist."
+        },
+        "subresource": {
+          "type": "string",
+          "description": "Optional colon-separated resource property chain, e.g. gradient or material:next_pass. Inspect first. Empty means the root resource."
+        },
+        "x": {
+          "type": "number"
+        },
+        "y": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "project",
+        "path",
+        "x",
+        "y"
+      ]
+    }
+  },
+  {
+    "name": "godot_gradient_point",
+    "description": "Add one Gradient color point. offset is 0..1; color is HTML hex such as #ff8800ff.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "project": {
+          "type": "string",
+          "description": "Absolute directory containing project.godot."
+        },
+        "path": {
+          "type": "string",
+          "description": "Project-relative .tres path, e.g. materials/player.tres. Parent directory must exist."
+        },
+        "subresource": {
+          "type": "string",
+          "description": "Optional colon-separated resource property chain, e.g. gradient or material:next_pass. Inspect first. Empty means the root resource."
+        },
+        "offset": {
+          "type": "number"
+        },
+        "color": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "project",
+        "path",
+        "offset",
+        "color"
+      ]
+    }
+  },
+  {
+    "name": "godot_animation_track",
+    "description": "Add one value track to an Animation and return its index. node_property is a Godot NodePath such as Player:position.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "project": {
+          "type": "string",
+          "description": "Absolute directory containing project.godot."
+        },
+        "path": {
+          "type": "string",
+          "description": "Project-relative .tres path, e.g. materials/player.tres. Parent directory must exist."
+        },
+        "subresource": {
+          "type": "string",
+          "description": "Optional colon-separated resource property chain, e.g. gradient or material:next_pass. Inspect first. Empty means the root resource."
+        },
+        "node_property": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "project",
+        "path",
+        "node_property"
+      ]
+    }
+  },
+  {
+    "name": "godot_animation_key",
+    "description": "Insert one key in an existing Animation value track. Use returned track index; time is within animation length. value is one Godot literal.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "project": {
+          "type": "string",
+          "description": "Absolute directory containing project.godot."
+        },
+        "path": {
+          "type": "string",
+          "description": "Project-relative .tres path, e.g. materials/player.tres. Parent directory must exist."
+        },
+        "subresource": {
+          "type": "string",
+          "description": "Optional colon-separated resource property chain, e.g. gradient or material:next_pass. Inspect first. Empty means the root resource."
+        },
+        "track": {
+          "type": "integer"
+        },
+        "time": {
+          "type": "number"
+        },
+        "value": {
+          "type": "string",
+          "description": "One Godot literal: 1.5, true, \"text\", Vector2(1, 2), Color(1, 0, 0, 1). Quote strings. For asset paths use the matching *_reference tool, not value. No code or batch JSON."
+        }
+      },
+      "required": [
+        "project",
+        "path",
+        "track",
+        "time",
+        "value"
+      ]
+    }
+  },
+  {
+    "name": "godot_theme_item",
+    "description": "Set one Theme item for a control class such as Button. Use value for color/constant/font_size, reference for stylebox/icon/font.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "project": {
+          "type": "string",
+          "description": "Absolute directory containing project.godot."
+        },
+        "path": {
+          "type": "string",
+          "description": "Project-relative .tres path, e.g. materials/player.tres. Parent directory must exist."
+        },
+        "subresource": {
+          "type": "string",
+          "description": "Optional colon-separated resource property chain, e.g. gradient or material:next_pass. Inspect first. Empty means the root resource."
+        },
+        "control": {
+          "type": "string"
+        },
+        "item": {
+          "type": "string"
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "color",
+            "constant",
+            "font_size",
+            "stylebox",
+            "icon",
+            "font"
+          ]
+        },
+        "value": {
+          "type": "string",
+          "description": "One Godot literal: 1.5, true, \"text\", Vector2(1, 2), Color(1, 0, 0, 1). Quote strings. For asset paths use the matching *_reference tool, not value. No code or batch JSON."
+        },
+        "reference": {
+          "type": "string",
+          "description": "Existing project-relative resource or imported asset path."
+        }
+      },
+      "required": [
+        "project",
+        "path",
+        "control",
+        "item",
+        "kind"
+      ]
+    }
+  },
+  {
+    "name": "godot_tile_atlas",
+    "description": "Add one imported texture atlas to a TileSet. source is a new nonnegative id; width/height are positive tile pixel dimensions.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "project": {
+          "type": "string",
+          "description": "Absolute directory containing project.godot."
+        },
+        "path": {
+          "type": "string",
+          "description": "Project-relative .tres path, e.g. materials/player.tres. Parent directory must exist."
+        },
+        "subresource": {
+          "type": "string",
+          "description": "Optional colon-separated resource property chain, e.g. gradient or material:next_pass. Inspect first. Empty means the root resource."
+        },
+        "reference": {
+          "type": "string",
+          "description": "Existing project-relative resource or imported asset path."
+        },
+        "source": {
+          "type": "integer"
+        },
+        "width": {
+          "type": "integer"
+        },
+        "height": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "project",
+        "path",
+        "reference",
+        "source",
+        "width",
+        "height"
+      ]
+    }
+  },
+  {
+    "name": "godot_tile_create",
+    "description": "Create one 1x1 tile at atlas grid coordinates x/y in an existing TileSet source. Engine rejects overlaps and out-of-bounds cells.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "project": {
+          "type": "string",
+          "description": "Absolute directory containing project.godot."
+        },
+        "path": {
+          "type": "string",
+          "description": "Project-relative .tres path, e.g. materials/player.tres. Parent directory must exist."
+        },
+        "subresource": {
+          "type": "string",
+          "description": "Optional colon-separated resource property chain, e.g. gradient or material:next_pass. Inspect first. Empty means the root resource."
+        },
+        "source": {
+          "type": "integer"
+        },
+        "x": {
+          "type": "integer"
+        },
+        "y": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "project",
+        "path",
+        "source",
+        "x",
+        "y"
+      ]
+    }
+  },
+  {
+    "name": "godot_scene_create",
+    "description": "Create a native scene with one built-in root node using Vollkorn editing code. Does not overwrite files. No GUI or project plugin.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "project": {
+          "type": "string",
+          "description": "Absolute directory containing project.godot."
+        },
+        "path": {
+          "type": "string",
+          "description": "Project-relative .tscn path. Parent directory must exist."
+        },
+        "type": {
+          "type": "string",
+          "description": "Root class, e.g. Node2D, Node3D or Control."
+        }
+      },
+      "required": [
+        "project",
+        "path",
+        "type"
+      ]
+    }
+  },
+  {
+    "name": "godot_scene_inspect",
+    "description": "Read the native scene tree (default); script is its attached path or null. saved_connections lists up to 64 connections stored in this scene (. means root), with a truncation flag. view=properties reads one node; view=cells reads one TileMapLayer. Set node for those views.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "project": {
+          "type": "string",
+          "description": "Absolute directory containing project.godot."
+        },
+        "path": {
+          "type": "string",
+          "description": "Project-relative .tscn path. Parent directory must exist."
+        },
+        "view": {
+          "type": "string",
+          "enum": [
+            "tree",
+            "properties",
+            "cells"
+          ]
+        },
+        "node": {
+          "type": "string",
+          "description": "Node path in the scene. root selects the root; e.g. Player/Camera2D."
+        }
+      },
+      "required": [
+        "project",
+        "path"
+      ]
+    }
+  },
+  {
+    "name": "godot_scene_instance",
+    "description": "Instance one existing child .tscn under a parent and save, using Vollkorn ownership handling.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "project": {
+          "type": "string",
+          "description": "Absolute directory containing project.godot."
+        },
+        "path": {
+          "type": "string",
+          "description": "Project-relative .tscn path. Parent directory must exist."
+        },
+        "reference": {
+          "type": "string",
+          "description": "Existing project-relative resource or imported asset path."
+        },
+        "parent": {
+          "type": "string",
+          "description": "Existing parent node path; root selects the scene root."
+        },
+        "name": {
+          "type": "string",
+          "description": "One valid node name, without a slash or special path characters."
+        }
+      },
+      "required": [
+        "project",
+        "path",
+        "reference",
+        "parent",
+        "name"
+      ]
+    }
+  },
+  {
+    "name": "godot_node_add",
+    "description": "Add one built-in node to a scene. Set its properties in later small calls; no node-tree JSON.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "project": {
+          "type": "string",
+          "description": "Absolute directory containing project.godot."
+        },
+        "path": {
+          "type": "string",
+          "description": "Project-relative .tscn path. Parent directory must exist."
+        },
+        "parent": {
+          "type": "string",
+          "description": "Existing parent node path; root selects the scene root."
+        },
+        "name": {
+          "type": "string",
+          "description": "One valid node name, without a slash or special path characters."
+        },
+        "type": {
+          "type": "string",
+          "description": "Built-in Node class, e.g. Sprite2D, AnimationPlayer, TileMapLayer or CollisionShape2D."
+        }
+      },
+      "required": [
+        "project",
+        "path",
+        "parent",
+        "name",
+        "type"
+      ]
+    }
+  },
+  {
+    "name": "godot_node_set",
+    "description": "Set ONE native node property and save the scene. Accepts Godot literals; simple [x,y] values use Vollkorn type conversion. Inspect first.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "project": {
+          "type": "string",
+          "description": "Absolute directory containing project.godot."
+        },
+        "path": {
+          "type": "string",
+          "description": "Project-relative .tscn path. Parent directory must exist."
+        },
+        "node": {
+          "type": "string",
+          "description": "Node path in the scene. root selects the root; e.g. Player/Camera2D."
+        },
+        "property": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string",
+          "description": "One Godot literal: 1.5, true, \"text\", Vector2(1, 2), Color(1, 0, 0, 1). Quote strings. For asset paths use the matching *_reference tool, not value. No code or batch JSON."
+        }
+      },
+      "required": [
+        "project",
+        "path",
+        "node",
+        "property",
+        "value"
+      ]
+    }
+  },
+  {
+    "name": "godot_node_reference",
+    "description": "Assign one node property to an existing resource, e.g. shape, material, texture, tile_set or script. For script use a valid .gd with a matching node base class. Engine validates the resource class.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "project": {
+          "type": "string",
+          "description": "Absolute directory containing project.godot."
+        },
+        "path": {
+          "type": "string",
+          "description": "Project-relative .tscn path. Parent directory must exist."
+        },
+        "node": {
+          "type": "string",
+          "description": "Node path in the scene. root selects the root; e.g. Player/Camera2D."
+        },
+        "property": {
+          "type": "string"
+        },
+        "reference": {
+          "type": "string",
+          "description": "Existing project-relative resource or imported asset path."
+        }
+      },
+      "required": [
+        "project",
+        "path",
+        "node",
+        "property",
+        "reference"
+      ]
+    }
+  },
+  {
+    "name": "godot_node_edit",
+    "description": "Do ONE node edit. target is a new name for rename/duplicate, a parent path for reparent, a group name for group_add/group_remove, or target node for connect. connect also needs signal and method with matching argument counts; no bind/unbind. remove needs only node.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "project": {
+          "type": "string",
+          "description": "Absolute directory containing project.godot."
+        },
+        "path": {
+          "type": "string",
+          "description": "Project-relative .tscn path. Parent directory must exist."
+        },
+        "node": {
+          "type": "string",
+          "description": "Node path in the scene. root selects the root; e.g. Player/Camera2D."
+        },
+        "action": {
+          "type": "string",
+          "enum": [
+            "rename",
+            "remove",
+            "reparent",
+            "duplicate",
+            "group_add",
+            "group_remove",
+            "connect"
+          ]
+        },
+        "target": {
+          "type": "string"
+        },
+        "signal": {
+          "type": "string"
+        },
+        "method": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "project",
+        "path",
+        "node",
+        "action"
+      ]
+    }
+  },
+  {
+    "name": "godot_animation_bind",
+    "description": "Bind one existing Animation .tres into an AnimationPlayer default library using Vollkorn animation code. Edit tracks/keys with the resource tools first.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "project": {
+          "type": "string",
+          "description": "Absolute directory containing project.godot."
+        },
+        "path": {
+          "type": "string",
+          "description": "Project-relative .tscn path. Parent directory must exist."
+        },
+        "node": {
+          "type": "string",
+          "description": "Node path in the scene. root selects the root; e.g. Player/Camera2D."
+        },
+        "name": {
+          "type": "string",
+          "description": "One valid node name, without a slash or special path characters."
+        },
+        "reference": {
+          "type": "string",
+          "description": "Existing project-relative resource or imported asset path."
+        }
+      },
+      "required": [
+        "project",
+        "path",
+        "node",
+        "name",
+        "reference"
+      ]
+    }
+  },
+  {
+    "name": "godot_tileset_create",
+    "description": "Create a TileSet from ONE texture atlas and automatically create all whole tiles, as in Vollkorn. The first source id is 0. Use tile_size dimensions in pixels.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "project": {
+          "type": "string",
+          "description": "Absolute directory containing project.godot."
+        },
+        "path": {
+          "type": "string",
+          "description": "Project-relative .tres path, e.g. materials/player.tres. Parent directory must exist."
+        },
+        "reference": {
+          "type": "string",
+          "description": "Existing project-relative resource or imported asset path."
+        },
+        "width": {
+          "type": "integer"
+        },
+        "height": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "project",
+        "path",
+        "reference",
+        "width",
+        "height"
+      ]
+    }
+  },
+  {
+    "name": "godot_tile_cell",
+    "description": "Set ONE TileMapLayer cell and save the scene. x/y are map coordinates; atlas_x/atlas_y select an existing atlas tile. source=-1 erases the cell.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "project": {
+          "type": "string",
+          "description": "Absolute directory containing project.godot."
+        },
+        "path": {
+          "type": "string",
+          "description": "Project-relative .tscn path. Parent directory must exist."
+        },
+        "node": {
+          "type": "string",
+          "description": "Node path in the scene. root selects the root; e.g. Player/Camera2D."
+        },
+        "x": {
+          "type": "integer"
+        },
+        "y": {
+          "type": "integer"
+        },
+        "source": {
+          "type": "integer"
+        },
+        "atlas_x": {
+          "type": "integer"
+        },
+        "atlas_y": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "project",
+        "path",
+        "node",
+        "x",
+        "y",
+        "source",
+        "atlas_x",
+        "atlas_y"
+      ]
+    }
+  },
+  {
+    "name": "godot_edit_batch",
+    "description": "Apply 1–16 native edits atomically in one project (max 32 KiB input). operation uses scene_create/node_add/node_set/node_reference/resource_create/resource_set/resource_reference. Create needs type; node_add needs parent/name/type; node_set/reference needs node/property plus value/reference; resource_set/reference needs property plus value/reference. No script/file/shell edits. All steps commit together or roll back on a normal error. Refuses an already open transaction. Success replaces the latest worker-local undo group; godot_edit_transaction(action=\"undo\") undoes the whole batch. Results include zero-based step indices. Not crash-safe: after interruption, rollback conflict or disk failure inspect files.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "project": {
+          "type": "string",
+          "description": "Absolute directory containing project.godot."
+        },
+        "operations": {
+          "type": "array",
+          "description": "1–16 ordered edit objects. Use native scene-local node paths. Each value is one Godot literal string, not arbitrary code.",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "operation": {
+                "type": "string",
+                "enum": [
+                  "scene_create",
+                  "node_add",
+                  "node_set",
+                  "node_reference",
+                  "resource_create",
+                  "resource_set",
+                  "resource_reference"
+                ]
+              },
+              "path": {
+                "type": "string",
+                "description": "Project-relative .tscn for scene/node operations or .tres for resource operations; parent directory must exist."
+              },
+              "type": {
+                "type": "string"
+              },
+              "parent": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "node": {
+                "type": "string"
+              },
+              "property": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string",
+                "description": "One Godot literal: 1.5, true, \"text\", Vector2(1, 2), Color(1, 0, 0, 1). Quote strings. For asset paths use the matching *_reference tool, not value. No code or batch JSON."
+              },
+              "reference": {
+                "type": "string",
+                "description": "Existing project-relative resource or imported asset path."
+              },
+              "subresource": {
+                "type": "string",
+                "description": "Optional colon-separated resource property chain, e.g. gradient or material:next_pass. Inspect first. Empty means the root resource."
+              }
+            },
+            "required": [
+              "operation",
+              "path"
+            ]
+          }
+        }
+      },
+      "required": [
+        "project",
+        "operations"
+      ]
+    }
+  },
+  {
+    "name": "godot_edit_transaction",
+    "description": "Individual native edits already save; a transaction is optional. For a group: begin ONCE, make native edits, then commit. rollback restores the open group; undo restores the latest committed group. When a failure reports rollback completed, the group is closed: fix the input instead of calling rollback again. A commit with files=[] tracked no native edits; it does not cover generic write/bash changes. Tracks native target files only (16 MiB of original file data), not ordinary file-tool/script edits. Refuses external-change conflicts. Worker-local history expires on stop/idle/turn end; finish groups promptly. A killed worker is NOT crash-safe; inspect disk after interruption.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "project": {
+          "type": "string",
+          "description": "Absolute directory containing project.godot."
+        },
+        "action": {
+          "type": "string",
+          "enum": [
+            "begin",
+            "commit",
+            "rollback",
+            "undo"
+          ]
+        }
+      },
+      "required": [
+        "project",
+        "action"
+      ]
+    }
+  },
+  {
+    "name": "godot_worker_stop",
+    "description": "Finish native resource editing and release the Headless worker. Also stops automatically at turn completion and after idle expiry.",
+    "parameters": {
+      "type": "object",
+      "properties": {}
+    }
+  },
+  {
+    "name": "load_godot_runtime",
+    "description": "Prepare the desktop-managed Godot 4.6 standard engine without executing project code. Set export_templates=true before executable exports. Downloads are pinned and verified. Use the normal shell or terminal tools for Godot project operations after preparation; do not request wider workspace permissions just to install the engine.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "export_templates": {
+          "type": "boolean",
+          "description": "Install matching export templates as well as the engine; defaults to false."
+        }
+      }
+    }
+  }
+]

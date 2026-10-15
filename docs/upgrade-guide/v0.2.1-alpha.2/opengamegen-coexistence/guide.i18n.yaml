@@ -1,0 +1,16 @@
+# Bilingual-pair consistency record for guide.md (docs/i18n/README.md): per heading
+# section, a hash of its English and Chinese blocks outside code blocks and generated regions.
+# After editing either side, bring the other along and re-record with:
+#   pnpm run verify-translation-pairing --write docs/upgrade-guide/v0.2.1-alpha.2/opengamegen-coexistence/guide.md
+/:
+  en: 8c87ee52f81eb4b2
+  zh: 6ff55a9eb02daa0c
+/use-the-separate-opengamegen-installation:
+  en: 92fc3f549eddf296
+  zh: 44e5f5c759ebb42e
+/use-the-separate-opengamegen-installation/change:
+  en: edb42b1f6a293ca1
+  zh: c2926582b5e6a414
+/use-the-separate-opengamegen-installation/migration:
+  en: f86cc951ef67ccab
+  zh: 0ed8af4dc933c716

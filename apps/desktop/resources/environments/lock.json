@@ -1,0 +1,46 @@
+{
+  "blender": {
+    "version": "4.5.14",
+    "assets": {
+      "darwin-arm64": {
+        "name": "blender-4.5.14-macos-arm64.dmg",
+        "url": "https://download.blender.org/release/Blender4.5/blender-4.5.14-macos-arm64.dmg",
+        "size": 311909763,
+        "sha256": "65134d9b07b20e2fa8d3c9e44f6f44ffb5c9774dd521b95f50387310241ca170",
+        "mirrors": [
+          "https://mirrors.tuna.tsinghua.edu.cn/blender/release/Blender4.5/blender-4.5.14-macos-arm64.dmg"
+        ]
+      },
+      "darwin-x64": {
+        "name": "blender-4.5.14-macos-x64.dmg",
+        "url": "https://download.blender.org/release/Blender4.5/blender-4.5.14-macos-x64.dmg",
+        "size": 340090796,
+        "sha256": "613e73339e97bd113adeeb28d9155beeacf2df7119ee4dbd6bdce234843645f6",
+        "mirrors": [
+          "https://mirrors.tuna.tsinghua.edu.cn/blender/release/Blender4.5/blender-4.5.14-macos-x64.dmg"
+        ]
+      },
+      "win32-x64": {
+        "name": "blender-4.5.14-windows-x64.zip",
+        "url": "https://download.blender.org/release/Blender4.5/blender-4.5.14-windows-x64.zip",
+        "size": 398661046,
+        "sha256": "b9533d2397ac1984db4466fb23a7a4649391cca93f6e84209f9bcc60d071c8b9",
+        "mirrors": [
+          "https://mirrors.tuna.tsinghua.edu.cn/blender/release/Blender4.5/blender-4.5.14-windows-x64.zip"
+        ]
+      }
+    }
+  },
+  "npm": {
+    "version": "11.6.2",
+    "asset": {
+      "name": "npm-11.6.2.tgz",
+      "url": "https://registry.npmjs.org/npm/-/npm-11.6.2.tgz",
+      "size": 2663834,
+      "sha256": "585f95094ee5cb2788ee11d90f2a518a7c9ef6e083fa141d0b63ca3383675a20",
+      "mirrors": [
+        "https://registry.npmmirror.com/npm/-/npm-11.6.2.tgz"
+      ]
+    }
+  }
+}

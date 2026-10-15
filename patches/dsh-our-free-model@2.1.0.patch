@@ -1,0 +1,77 @@
+diff --git a/src/adapter.js b/src/adapter.js
+index 0d6e95c5336ed22d631067bb9d4b86bceb6df071..357d96d2fafd8de5c348e997bf521d772c5f1a95 100644
+--- a/src/adapter.js
++++ b/src/adapter.js
+@@ -536,12 +536,26 @@ export class FreeModelAdapter {
+         const reason = outcome.brokenToolCall === true ? { kind: 'max-tokens' } : finishReason(outcome.finish)
+         // finishReason 是兜底映射，failed/cancelled 也会落成 stop：正常收尾的判定必须显式查原 token。
+         const elapsed = Date.now() - started
++        // Product tool tasks must not be converted into a tool_choice:none final answer.
++        // No text or tool was emitted, so the host may safely retry/fail over the request.
++        // Keep the provider's answer-only recovery unchanged for conversations without tools.
++        if (declared.length > 0 && outcome.sawReasoning === true
++          && !sawAnswer && outcome.sawToolCall !== true && outcome.brokenToolCall !== true
++          && (outcome.sawFinish !== true || outcome.finish === undefined
++            || ['stop', 'end_turn', 'stop_sequence', 'length', 'max_tokens', 'max_output_tokens', 'incomplete'].includes(outcome.finish))) {
++          const message = `our free model ended with reasoning but no answer or structured tool call (finish=${outcome.finish ?? 'missing'}); retry or switch model with tools preserved`
++          record(false, outcome)
++          finishTurn(false, false, attempt + 1)
++          yield { type: 'usage', usage: totalUsage }
++          yield { type: 'finish', reason: { kind: 'error', failure: { message, code: CODE.empty } } }
++          return { ok: false, ...advanceVerdict(CODE.empty, message) }
++        }
+         const interrupted = canRecover(outcome, policy, elapsed)
+         // 正文撞输出上限被截断（finish=length）：把已出正文回灌成 assistant 轮、
+         // 用剩余预算自动续写一次，替代宿主提示的「发送继续」手动接力（#28）。
+         // 只在首段触发（recovering 段自己也撞墙就如实报 max-tokens，不无限续），
+         // 且不与断流/空停续写共用 attempt 名额以外的路径。
+-        const maxTokensCut = policy.enabled && !recovering && reason.kind === 'max-tokens' && outcome.brokenToolCall !== true
++        const maxTokensCut = declared.length === 0 && policy.enabled && !recovering && reason.kind === 'max-tokens' && outcome.brokenToolCall !== true
+           && outcome.sawText === true && outcome.sawToolCall !== true
+           && typeof outcome.answerText === 'string' && outcome.answerText.trim() !== ''
+         const silentStop = !interrupted && !maxTokensCut && reason.kind === 'stop'
+diff --git a/src/http.js b/src/http.js
+index 9291ad281e359794362926b3a50d85f21eef4ef7..25cda7bf9cb123ce7604c4137c1cd3f08c23a608 100644
+--- a/src/http.js
++++ b/src/http.js
+@@ -420,7 +420,6 @@ export async function readSse(source, onData, signal, timeoutMs = 300000) {
+   let buffer = ''
+   let deadline = Date.now() + timeoutMs
+   let stopped = false
+-  const hasSignal = signal !== undefined && signal !== null
+   const stop = () => {
+     if (stopped) return
+     stopped = true
+@@ -432,21 +431,29 @@ export async function readSse(source, onData, signal, timeoutMs = 300000) {
+   }
+   // Cancelling a reader is best effort: undici can leave an already pending
+   // `next()` unresolved until the peer closes. Race that read with the caller's
+-  // abort so a held response cannot keep the adapter waiting.
++  // abort and the idle deadline so a held response cannot keep the adapter waiting.
+   const next = async () => {
+     if (signal?.aborted) throw new UpstreamError('request aborted', CODE.aborted)
+     let onAbort
++    let timer
+     const halted = new Promise((_, reject) => {
+       onAbort = () => {
+         stop()
+         reject(new UpstreamError('request aborted', CODE.aborted))
+       }
+       signal?.addEventListener('abort', onAbort, { once: true })
++      timer = setTimeout(() => {
++        stop()
++        reject(signal?.aborted
++          ? new UpstreamError('request aborted', CODE.aborted)
++          : new UpstreamError('our-free-model: upstream stream idle past its deadline', CODE.timeout))
++      }, Math.max(0, deadline - Date.now()))
+     })
+-    const pending = Promise.resolve().then(() => iterator.next())
++    const pending = Promise.resolve().then(() => reader !== null ? reader.read() : iterator.next())
+     try {
+-      return hasSignal ? await Promise.race([pending, halted]) : await pending
++      return await Promise.race([pending, halted])
+     } finally {
++      clearTimeout(timer)
+       signal?.removeEventListener('abort', onAbort)
+       // The losing read settles after the source is cancelled; do not let its
+       // rejection become an unhandled promise after the caller has returned.

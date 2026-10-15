@@ -1,0 +1,37 @@
+{
+  "name": "aihorde_generate_image",
+  "description": "Generate one raster artwork through the official AI Horde community API and save a NEW PNG inside an EXISTING workspace directory. Sends your prompt to community workers. Anonymous by default: low queue priority, high-load restrictions, and anonymous images are shared by the service. Optional local AI_HORDE_API_KEY improves account priority; never pass keys in tool arguments. Supports prompt, model, width, height and steps. Call aihorde_list_models before choosing a model. For observable progress prefer aihorde_image_request submit/status/save instead. May take minutes; cancellation/timeout attempts to cancel queued work. Returns actual dimensions, worker model, seed, sharing flag and SHA-256. Inspect with read_image before using in a game. No reference-image editing or guaranteed transparency.",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "prompt": {
+        "type": "string",
+        "description": "Image description, 1–4000 characters; optionally append ### negative prompt."
+      },
+      "output": {
+        "type": "string",
+        "description": "Absolute NEW .png path in the workspace; parent directory must exist."
+      },
+      "model": {
+        "type": "string",
+        "description": "Optional exact AI Horde model name; omitted uses the service default stable_diffusion."
+      },
+      "width": {
+        "type": "integer",
+        "description": "256–1024, multiple of 64; default 512."
+      },
+      "height": {
+        "type": "integer",
+        "description": "256–1024, multiple of 64; default 512."
+      },
+      "steps": {
+        "type": "integer",
+        "description": "1–50; default 20. Larger requests may require kudos."
+      }
+    },
+    "required": [
+      "prompt",
+      "output"
+    ]
+  }
+}

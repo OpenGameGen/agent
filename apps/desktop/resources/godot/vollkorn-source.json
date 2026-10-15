@@ -1,0 +1,169 @@
+{
+  "repository": "https://github.com/Vollkorn-Games/godot-mcp",
+  "commit": "632530638448ea3e79394fbf74e9a5c92c4b67e5",
+  "license": "MIT",
+  "sourcePath": "src/scripts/godot_operations.gd",
+  "sourceSha256": "4552c87ec164534254552e0550b40eb28af2fc238220d7e170be92e2426101e6",
+  "adaptedPath": "vollkorn-edit.gd",
+  "functions": [
+    {
+      "name": "get_script_by_name",
+      "sourceLine": 347,
+      "sha256": "5985b675002ae19d70ea7f58d6018a22d20cfb63a2654136e742de6afe9f384f"
+    },
+    {
+      "name": "instantiate_class",
+      "sourceLine": 390,
+      "sha256": "c782f2335783df26af0a52fd5382524bf673a1c8f32082f7e780f03214b2b9b8"
+    },
+    {
+      "name": "create_scene",
+      "sourceLine": 431,
+      "sha256": "ca52d01af34471a6fbf7255f9c181ce28ddbf8284a09a94983d0fd5baf20d9ce"
+    },
+    {
+      "name": "add_node",
+      "sourceLine": 723,
+      "sha256": "29ebe40889ddedf956dabc09324be068ae5db362e8738de8d2d3fae3b8502f96"
+    },
+    {
+      "name": "set_cells",
+      "sourceLine": 954,
+      "sha256": "9f5a6bef092d4c2dcc9651fc6af81596f8e4184d70cbacbc009ca14354ff9bb6"
+    },
+    {
+      "name": "_load_scene",
+      "sourceLine": 1037,
+      "sha256": "5c52dcbf3320ce993bd8aabf3bdf885d17f361b7e409175accb3d863a503fd45"
+    },
+    {
+      "name": "_find_node",
+      "sourceLine": 1056,
+      "sha256": "2b717fc49379239ebe28baa6b4b81fcbc62e441ef261af18db25af23b91b2efd"
+    },
+    {
+      "name": "_save_scene",
+      "sourceLine": 1069,
+      "sha256": "83010b040c8c5e9f563fa83ae65b8f274230d49056470244dc798a026bfc51c6"
+    },
+    {
+      "name": "get_scene_tree",
+      "sourceLine": 1081,
+      "sha256": "9205c42b5fd003681e6c7daaf056fc4f19d0945bad2a4e489a67d347285b8099"
+    },
+    {
+      "name": "_serialize_node",
+      "sourceLine": 1089,
+      "sha256": "c8958ca611e027f86c0aa041caa98f576b1968c98be9246161e45c967e1790e0"
+    },
+    {
+      "name": "set_node_properties",
+      "sourceLine": 1128,
+      "sha256": "e508239844bbc6739230f24e20ec50587a71bea5a23bd310902f0b87da819c33"
+    },
+    {
+      "name": "_convert_property_value",
+      "sourceLine": 1145,
+      "sha256": "0920adb5d1472716b1651bc3f3b802dedcc0be29d266d7af6ae573177b9e40ec"
+    },
+    {
+      "name": "_get_property_type",
+      "sourceLine": 1180,
+      "sha256": "4977faa5c90a835f80afcba66f6476840d3bbbe4f5719a849f16443bf442dabe"
+    },
+    {
+      "name": "create_resource",
+      "sourceLine": 1319,
+      "sha256": "5fdca8040f93b747e26e72bad9c68899dbfdb9024c8590a270a90e898b06546f"
+    },
+    {
+      "name": "remove_node",
+      "sourceLine": 1383,
+      "sha256": "ac50827296b68a6c2b91b9bda83e6b76606373413daf8c297e45d04e4df418b9"
+    },
+    {
+      "name": "reparent_node",
+      "sourceLine": 1402,
+      "sha256": "35a5f8f9626ed243dfc58b49b5b8350b33ec1bd6522da9cf1df6ef034d603998"
+    },
+    {
+      "name": "_set_owner_recursive",
+      "sourceLine": 1421,
+      "sha256": "e9c40b843d54e1af89e5a265db9cdae9b7fcc256d88958e7c6147672cdac3f8d"
+    },
+    {
+      "name": "rename_node",
+      "sourceLine": 1427,
+      "sha256": "536f208adb808f588a5481e39907b888a5089ca1a5c15e5d02125531b9a5e2fe"
+    },
+    {
+      "name": "connect_signal_op",
+      "sourceLine": 1451,
+      "sha256": "ca67f7bae44628746f0d6b4692efb696d2d01f0f062ef60e89523160937cac46"
+    },
+    {
+      "name": "get_tile_data",
+      "sourceLine": 1472,
+      "sha256": "543c07a5a30670d38dc78679ebbebe5bfe0f0ec1c3176e993df7df4986831761"
+    },
+    {
+      "name": "create_tileset",
+      "sourceLine": 1499,
+      "sha256": "eee860ee39d521f84610e392c32544ed7cf9297941e2c8a12bff03f70116c20d"
+    },
+    {
+      "name": "add_to_group",
+      "sourceLine": 2152,
+      "sha256": "a72118bc5e18ca27801d38cb2c4aa9cee2f5fad4574380711bcd6f390a816c73"
+    },
+    {
+      "name": "remove_from_group",
+      "sourceLine": 2167,
+      "sha256": "fad69c9c21e51f8954ce6af91105b70d84615017a8a0b792ab2a03e947a42061"
+    },
+    {
+      "name": "instantiate_scene",
+      "sourceLine": 2186,
+      "sha256": "3c05bfc4da4f6106c63727335e408b28ac3cc4a442c68041427f28e791079240"
+    },
+    {
+      "name": "add_animation",
+      "sourceLine": 2225,
+      "sha256": "47ae0ef80603e77a7a92ae0452bb1dae58b274c0343ac45941219b4563c0297c"
+    },
+    {
+      "name": "duplicate_node_op",
+      "sourceLine": 2427,
+      "sha256": "42edd03098c24ac53b07f5e21f93badee20257db75c2d5faf60903da4bdb18fb"
+    },
+    {
+      "name": "get_node_properties",
+      "sourceLine": 2453,
+      "sha256": "6409084ac4c934e19efb99746e60db1fe9fdfc3ac6b68af8b53aaf8a2b8feba6"
+    },
+    {
+      "name": "_serialize_value",
+      "sourceLine": 2476,
+      "sha256": "96f4e6966354e5ac8ac45ede867c0c1b4615cb8af222e13d07e09c68d9eb5996"
+    }
+  ],
+  "changes": [
+    "Extract selected editing functions into a RefCounted module; exclude the MCP/CLI dispatcher, editor bridge, filesystem tools, tests, screenshots and input.",
+    "Replace one-shot prints/quit with operation-local messages/errors and early returns; propagate missing scene/node failures.",
+    "Use CACHE_MODE_IGNORE_DEEP for all native resource/dependency loads.",
+    "Track and free allocated scene nodes after each operation; free removed nodes immediately.",
+    "Do not assign the root node as its own owner.",
+    "Persist signal connections with CONNECT_PERSIST.",
+    "Allow add_animation to bind a separately edited Animation resource; check library existence before lookup.",
+    "The Host adapter validates path, class, property and operation arguments before invoking source functions.",
+    "Verify node property readback before saving; refuse rejected or adjusted values instead of reporting a successful edit.",
+    "Validate and convert node values once in the product dispatcher; set_node_properties no longer reinterprets already validated Dictionary values."
+  ],
+  "productExtensions": [
+    "resource inspection, single-property type validation and subresource editing",
+    "Curve/Gradient points and Theme items",
+    "manual TileSet atlas and single tile editing",
+    "small-step tool schemas, native resource references, lifetime and transport",
+    "short-lived native edit groups with rollback, one committed-group undo, size limits and external-change/symlink conflict checks"
+  ]
+}

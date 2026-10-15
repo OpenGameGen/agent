@@ -1,0 +1,36 @@
+[
+  {
+    "name": "manage_runtime_environment",
+    "description": "Detect compatible locally installed Blender/Godot and inspect, check, install or repair fixed desktop runtimes and Godot export templates. Downloads use product-pinned checksums and user-owned directories. status and doctor never download. node preparation also installs npm; Python and Node ship with the app. Use ordinary confined shell tools for project .venv, dependencies, scripts and GUI launch. Remote machines have separate environments.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "action": {
+          "type": "string",
+          "description": "Read status; run health checks; prepare runtime; or repair managed downloads. Damaged bundled interpreters need a desktop reinstall.",
+          "enum": [
+            "status",
+            "doctor",
+            "ensure",
+            "repair"
+          ]
+        },
+        "runtime": {
+          "type": "string",
+          "description": "Defaults to all. status always reports all runtimes.",
+          "enum": [
+            "all",
+            "node",
+            "python",
+            "blender",
+            "godot",
+            "templates"
+          ]
+        }
+      },
+      "required": [
+        "action"
+      ]
+    }
+  }
+]

@@ -1,0 +1,41 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Godot Game</title>$GODOT_HEAD_INCLUDE
+<style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#111}canvas{display:block;width:100%;height:100%}#status{position:absolute;color:white;top:12px;left:12px;font:14px sans-serif}</style>
+</head><body><canvas id="canvas" tabindex="0"></canvas><div id="status">Loading game…</div>
+<script src="$GODOT_URL"></script><script>
+(() => {
+  const errors = [], logs = [], pending = new Map(); let sequence = 0;
+  const error = value => { errors.push(String(value).slice(0,4096)); if(errors.length>100)errors.shift(); };
+  const log = value => { logs.push(String(value).slice(0,4096)); if(logs.length>200)logs.shift(); };
+  window.addEventListener('error', e => error(e.message));
+  window.addEventListener('unhandledrejection', e => error(e.reason));
+  window.openGame = {
+    ready:false, dispatch:null,
+    respond(id, json) { const entry=pending.get(id); if(entry){clearTimeout(entry.timer);pending.delete(id);entry.resolve(JSON.parse(json));} },
+    request(payload) {
+      if(payload.command==='logs') return Promise.resolve({logs:[...logs],limit:200});
+      if(payload.command==='errors') return Promise.resolve({errors:[...errors]});
+      if(!this.dispatch) return Promise.reject(new Error('Godot bridge not ready'));
+      if(pending.size>=16)return Promise.reject(new Error('Too many game requests'));
+      const id=++sequence;
+      return new Promise((resolve,reject)=>{
+        const timer=setTimeout(()=>{pending.delete(id);reject(new Error('Game bridge timeout'));},payload.command==='reproduce'?75000:15000);
+        pending.set(id,{resolve,reject,timer});
+        this.dispatch(id,JSON.stringify(payload));
+      }).then(result=>{
+        if(payload.command==='ui_target' && !result.error){
+          const r=document.getElementById('canvas').getBoundingClientRect();
+          result.x=r.x+result.x/result.viewport_width*r.width;
+          result.y=r.y+result.y/result.viewport_height*r.height;
+        }
+        return result;
+      });
+    }
+  };
+  const engine = new Engine($GODOT_CONFIG);
+  engine.startGame({canvas:document.getElementById('canvas'),onPrint:log,onPrintError:error}).then(()=>{
+    document.getElementById('status').remove();
+  }).catch(e=>{error(e);document.getElementById('status').textContent=String(e);});
+})();
+</script></body></html>

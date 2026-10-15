@@ -1,0 +1,10 @@
+name: Start and move
+steps:
+  - watch_signal: {node: /root/Main, signal: started}
+  - click_ui: /root/Main/StartButton
+  - wait_signal: {node: /root/Main, signal: started}
+  - assert: {node: /root/Main, property: playing, operator: '==', expected: true}
+  - key: ArrowRight
+    duration_ms: 500
+  - assert: {node: /root/Main/Player, property: position.x, operator: '>', expected: 80}
+  - screenshot: moved

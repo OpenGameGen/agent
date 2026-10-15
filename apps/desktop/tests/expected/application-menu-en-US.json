@@ -1,0 +1,27 @@
+[
+  {
+    "label": "Check for Updates…"
+  },
+  {
+    "label": "Network Diagnostics…"
+  },
+  {
+    "label": "Manage opengamegen Command…"
+  },
+  {
+    "role": "hide",
+    "label": "Hide OpenGameGen"
+  },
+  {
+    "role": "hideOthers",
+    "label": "Hide Others"
+  },
+  {
+    "role": "unhide",
+    "label": "Show All"
+  },
+  {
+    "role": "quit",
+    "label": "Quit OpenGameGen"
+  }
+]
