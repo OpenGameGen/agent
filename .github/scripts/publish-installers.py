@@ -42,24 +42,15 @@ for target, platform, extension in [('mac-arm64', 'macOS-arm64', 'dmg'), ('mac-x
         sha = hashlib.file_digest(stream, 'sha256').hexdigest()
     details.append({'name': asset.name, 'bytes': asset.stat().st_size, 'sha256': sha})
 notes = '\n'.join([
-    '# OpenGameGen 三平台预览版',
-    '',
     '从下方 Assets 直接下载适合你电脑的安装包：',
-    '- Apple Silicon Mac：macOS-arm64.dmg',
-    '- Intel Mac：macOS-x64.dmg',
-    '- Windows 64 位：Windows-x64.exe',
+    '- Apple Silicon Mac：OpenGameGen-macOS-arm64.dmg',
+    '- Intel Mac：OpenGameGen-macOS-x64.dmg',
+    '- Windows 64 位：OpenGameGen-Windows-x64.exe',
     '',
     '这些安装包未签名；macOS 未公证。版本仍为 alpha 预览版。',
     '本次已通过三个原生平台的 CI 打包及包内运行检查；尚未完成真实桌面安装交互验收。',
     '',
     f'构建来源：https://github.com/{repo}/actions/runs/{run_id}',
-    f'源码提交：`{source}`',
-    '',
-    '## SHA-256',
-    '',
-    '```text',
-    *[f'{d["sha256"]}  {d["name"]}' for d in details],
-    '```',
 ])
 Path('release-notes.md').write_text(notes)
 existing = subprocess.run(['gh', 'release', 'view', tag, '--json', 'isDraft'], capture_output=True, text=True)
