@@ -13,7 +13,31 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  version:
+    name: Prepare build version
+    runs-on: ubuntu-24.04
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7.0.0
+        with:
+          node-version: '24'
+      - name: Generate shared build version
+        id: version
+        run: |
+          node --input-type=module <<'JS'
+          import { readFileSync, appendFileSync } from 'node:fs';
+          import { desktopBuildVersionPrefix, validateDesktopBuildVersion } from './apps/desktop/scripts/desktop-build-version.mjs';
+          const product = JSON.parse(readFileSync('apps/desktop/package.json', 'utf8')).version;
+          const date = new Date().toISOString().slice(0, 10).replaceAll('-', '');
+          const version = validateDesktopBuildVersion(`${desktopBuildVersionPrefix(product)}${date}.${process.env.GITHUB_RUN_NUMBER}.${process.env.GITHUB_RUN_ATTEMPT}`, product);
+          appendFileSync(process.env.GITHUB_OUTPUT, `version=${version}\n`);
+          JS
   package:
+    needs: version
     name: Installer / ${{ matrix.target }}
     timeout-minutes: 120
     strategy:
@@ -35,6 +59,7 @@ jobs:
         shell: pwsh
     env:
       DSH_TELEMETRY_DISABLED: '1'
+      PRODUCT_BUILD_VERSION: ${{ needs.version.outputs.version }}
     steps:
       - uses: actions/checkout@v7.0.1
         with:
@@ -55,11 +80,8 @@ jobs:
         id: settings
         run: |
           @'
-          import { readFileSync, writeFileSync, appendFileSync } from 'node:fs';
-          import { desktopBuildVersionPrefix, validateDesktopBuildVersion } from './apps/desktop/scripts/desktop-build-version.mjs';
-          const product = JSON.parse(readFileSync('apps/desktop/package.json', 'utf8')).version;
-          const date = new Date().toISOString().slice(0, 10).replaceAll('-', '');
-          const version = validateDesktopBuildVersion(`${desktopBuildVersionPrefix(product)}${date}.${process.env.GITHUB_RUN_NUMBER}.${process.env.GITHUB_RUN_ATTEMPT}`, product);
+          import { writeFileSync, appendFileSync } from 'node:fs';
+          const version = process.env.PRODUCT_BUILD_VERSION;
           appendFileSync(process.env.GITHUB_OUTPUT, `version=${version}\n`);
           if (process.platform === 'win32') writeFileSync('apps/desktop/.env.windows', 'DSH_DESKTOP_APP_ID=com.opengamegen.desktop\nOPENGAME_UPDATE_MODE=disabled\n', { flag: 'wx' });
           appendFileSync(process.env.GITHUB_STEP_SUMMARY, `Unsigned installer\n\nVersion: ${version}\n\nCommit: ${process.env.GITHUB_SHA}\n`);
@@ -103,3 +125,36 @@ jobs:
           if (Test-Path -LiteralPath apps/desktop/.env.windows) {
             Remove-Item -LiteralPath apps/desktop/.env.windows
           }
+  release:
+    name: Publish three-platform Release
+    needs: [version, package]
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    permissions:
+      actions: read
+      contents: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+      PRODUCT_BUILD_VERSION: ${{ needs.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - name: Publish verified installers
+        shell: bash
+        run: |
+          set -uo pipefail
+          python3 .github/scripts/publish-installers.py 2>&1 | tee "$RUNNER_TEMP/publish-release.log"
+          publish_status=${PIPESTATUS[0]}
+          if [ "$publish_status" -ne 0 ]; then
+            python3 - <<'PY'
+          import os
+          from pathlib import Path
+          text = '\n'.join((Path(os.environ['RUNNER_TEMP']) / 'publish-release.log').read_text(errors='replace').splitlines()[-60:])
+          text = text.replace('%', '%25').replace('\r', '%0D').replace('\n', '%0A')
+          print('::error title=Release publication failed::' + text)
+          PY
+          fi
+          exit "$publish_status"
