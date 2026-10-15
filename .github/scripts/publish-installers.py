@@ -30,7 +30,7 @@ for target, platform, extension in [('mac-arm64', 'macOS-arm64', 'dmg'), ('mac-x
     digest = artifact.get('digest')
     if digest:
         assert digest == 'sha256:' + hashlib.file_digest(archive.open('rb'), 'sha256').hexdigest()
-    asset = out / f'OpenGameGen-{version}-{platform}.{extension}'
+    asset = out / f'OpenGameGen-{platform}.{extension}'
     with zipfile.ZipFile(archive) as zipped:
         installers = [n for n in zipped.namelist() if n.lower().endswith('.' + extension)]
         assert len(installers) == 1
@@ -74,7 +74,7 @@ if existing.returncode == 0:
         print(published['html_url'])
         raise SystemExit(0)
 else:
-    subprocess.run(['gh', 'release', 'create', tag, '--target', source, '--title', f'OpenGameGen {version}', '--notes-file', 'release-notes.md', '--draft', '--prerelease'], check=True)
+    subprocess.run(['gh', 'release', 'create', tag, '--target', source, '--title', 'OpenGameGen 三平台预览版', '--notes-file', 'release-notes.md', '--draft', '--prerelease'], check=True)
 subprocess.run(['gh', 'release', 'upload', tag, *[str(out / d['name']) for d in details], '--clobber'], check=True)
 release_ref = json.loads(subprocess.check_output(['gh', 'release', 'view', tag, '--json', 'apiUrl']))
 release = api(release_ref['apiUrl'])

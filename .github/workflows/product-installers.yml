@@ -25,10 +25,12 @@ jobs:
       - uses: actions/setup-node@v7.0.0
         with:
           node-version: '24'
+          package-manager-cache: false
       - name: Generate shared build version
         id: version
         run: |
-          node --input-type=module <<'JS'
+          set +e
+          node --input-type=module <<'JS' 2>&1 | tee "$RUNNER_TEMP/build-version.log"
           import { readFileSync, appendFileSync } from 'node:fs';
           import { desktopBuildVersionPrefix, validateDesktopBuildVersion } from './apps/desktop/scripts/desktop-build-version.mjs';
           const product = JSON.parse(readFileSync('apps/desktop/package.json', 'utf8')).version;
@@ -36,6 +38,16 @@ jobs:
           const version = validateDesktopBuildVersion(`${desktopBuildVersionPrefix(product)}${date}.${process.env.GITHUB_RUN_NUMBER}.${process.env.GITHUB_RUN_ATTEMPT}`, product);
           appendFileSync(process.env.GITHUB_OUTPUT, `version=${version}\n`);
           JS
+          version_status=${PIPESTATUS[0]}
+          if [ "$version_status" -ne 0 ]; then
+            python3 - <<'PY'
+          import os
+          from pathlib import Path
+          detail = (Path(os.environ['RUNNER_TEMP']) / 'build-version.log').read_text()
+          print('::error title=Build version failed::' + detail.replace('%', '%25').replace('\r', '%0D').replace('\n', '%0A'))
+          PY
+          fi
+          exit "$version_status"
   package:
     needs: version
     name: Installer / ${{ matrix.target }}
