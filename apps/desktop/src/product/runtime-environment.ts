@@ -27,11 +27,11 @@ export async function prepareRuntimeEnvironment(
   environment: NodeJS.ProcessEnv, options: RuntimeEnvironmentOptions,
 ): Promise<NodeJS.ProcessEnv> {
   const platform = options.platform ?? process.platform
-  if (!['darwin', 'win32'].includes(platform)) throw new Error(`Unsupported desktop environment: ${platform}`)
+  if (!['darwin', 'win32', 'linux'].includes(platform)) throw new Error(`Unsupported desktop environment: ${platform}`)
   for (const path of [options.source, options.root, options.primaryRuntime]) if (!isAbsolute(path)) throw new Error('Environment paths must be absolute')
   const godotRoot = environment.GODOT_RUNTIME_ROOT
   const godotResources = environment.GODOT_RUNTIME_RESOURCES
-  if (!godotRoot || !godotResources || !isAbsolute(godotRoot) || !isAbsolute(godotResources)) throw new Error('Prepare Godot environment before shared runtime launchers')
+  if (platform !== 'linux' && (!godotRoot || !godotResources || !isAbsolute(godotRoot) || !isAbsolute(godotResources))) throw new Error('Prepare Godot environment before shared runtime launchers')
   const windows = platform === 'win32'
   const nodeBin = join(options.primaryRuntime, 'dependencies', 'node', 'bin')
   const node = join(nodeBin, windows ? 'node.exe' : 'node')

@@ -92,9 +92,9 @@ function requireReadableFile(environment, name) {
 export function validateDesktopPackageEnvironment(environment, target, options = {}) {
   productAppId(environment)
   resolveNpmRegistry(environment)
-  if (target.platform !== 'darwin' || !options.unsigned) resolveProductMandatoryPolicy(environment)
+  if (target.platform === 'win32' || !options.unsigned) resolveProductMandatoryPolicy(environment)
   if (target.platform === 'darwin') resolveMacOSPackageSettings(environment)
-  else resolveWindowsPackageSettings(environment)
+  else if (target.platform === 'win32') resolveWindowsPackageSettings(environment)
   if (options.unsigned) return
   if (!options.prepareOnly) resolveProductUpdateConfig(environment, target.platform, target.arch)
   if (target.platform === 'win32') {

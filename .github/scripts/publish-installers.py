@@ -1,4 +1,4 @@
-# Publish only after all three installer jobs succeed.
+# Publish only after all four installer jobs succeed.
 import hashlib, json, os, subprocess, zipfile
 from pathlib import Path
 repo = os.environ['GITHUB_REPOSITORY']
@@ -14,12 +14,12 @@ jobs = api(f'repos/{repo}/actions/runs/{run_id}/jobs?filter=all&per_page=100')['
 latest = {}
 for job in sorted(jobs, key=lambda item: item['id']):
     latest[job['name']] = job
-for target in ('mac-arm64', 'mac-x64', 'win-x64'):
+for target in ('mac-arm64', 'mac-x64', 'win-x64', 'linux-x64'):
     assert latest[f'Installer / {target}']['conclusion'] == 'success'
 artifacts = api(f'repos/{repo}/actions/runs/{run_id}/artifacts')['artifacts']
 out = Path(os.environ['RUNNER_TEMP']) / 'release-installers'; out.mkdir(exist_ok=True)
 details = []
-for target, platform, extension in [('mac-arm64', 'macOS-arm64', 'dmg'), ('mac-x64', 'macOS-x64', 'dmg'), ('win-x64', 'Windows-x64', 'exe')]:
+for target, platform, extension in [('mac-arm64', 'macOS-arm64', 'dmg'), ('mac-x64', 'macOS-x64', 'dmg'), ('win-x64', 'Windows-x64', 'exe'), ('linux-x64', 'Linux-x64', 'AppImage')]:
     expected = f'opengamegen-{target}-unsigned-{version}-{source}'
     matches = [a for a in artifacts if a['name'] == expected]
     assert len(matches) == 1 and not matches[0]['expired']
@@ -46,9 +46,11 @@ notes = '\n'.join([
     '- Apple Silicon Mac：OpenGameGen-macOS-arm64.dmg',
     '- Intel Mac：OpenGameGen-macOS-x64.dmg',
     '- Windows 64 位：OpenGameGen-Windows-x64.exe',
+    '- Linux x64：OpenGameGen-Linux-x64.AppImage',
     '',
     '这些安装包未签名；macOS 未公证。版本仍为 alpha 预览版。',
-    '本次已通过三个原生平台的 CI 打包及包内运行检查；尚未完成真实桌面安装交互验收。',
+    'Linux 包为 AppImage；当前构建未启用 Godot 集成，且未配置 Linux 桌面图标。',
+    '本次已通过四个原生平台的 CI 打包及包内运行检查；尚未完成真实桌面安装交互验收。',
     '',
     f'构建来源：https://github.com/{repo}/actions/runs/{run_id}',
 ])
@@ -65,7 +67,7 @@ if existing.returncode == 0:
         print(published['html_url'])
         raise SystemExit(0)
 else:
-    subprocess.run(['gh', 'release', 'create', tag, '--target', source, '--title', 'OpenGameGen 三平台预览版', '--notes-file', 'release-notes.md', '--draft', '--prerelease'], check=True)
+    subprocess.run(['gh', 'release', 'create', tag, '--target', source, '--title', 'OpenGameGen 四平台预览版', '--notes-file', 'release-notes.md', '--draft', '--prerelease'], check=True)
 subprocess.run(['gh', 'release', 'upload', tag, *[str(out / d['name']) for d in details], '--clobber'], check=True)
 release_ref = json.loads(subprocess.check_output(['gh', 'release', 'view', tag, '--json', 'apiUrl']))
 release = api(release_ref['apiUrl'])
@@ -77,7 +79,7 @@ for d in details:
     assert actual[d['name']]['digest'] == 'sha256:' + d['sha256']
 subprocess.run(['gh', 'release', 'edit', tag, '--draft=false', '--prerelease', '--notes-file', 'release-notes.md'], check=True)
 release = api(f'repos/{repo}/releases/tags/{tag}')
-assert not release['draft'] and len(release['assets']) == 3
+assert not release['draft'] and len(release['assets']) == 4
 print(release['html_url'])
 with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as stream:
     stream.write(notes + '\n\nRelease: ' + release['html_url'] + '\n')

@@ -68,6 +68,9 @@ jobs:
           - target: win-x64
             runner: windows-2022
             extension: exe
+          - target: linux-x64
+            runner: ubuntu-24.04
+            extension: AppImage
     runs-on: ${{ matrix.runner }}
     defaults:
       run:
@@ -141,7 +144,7 @@ jobs:
             Remove-Item -LiteralPath apps/desktop/.env.windows
           }
   release:
-    name: Publish three-platform Release
+    name: Publish four-platform Release
     needs: [version, package]
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-24.04

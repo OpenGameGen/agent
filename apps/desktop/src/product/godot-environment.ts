@@ -26,6 +26,8 @@ export async function prepareGodotEnvironment(
   environment: NodeJS.ProcessEnv, options: GodotEnvironmentOptions,
 ): Promise<NodeJS.ProcessEnv> {
   const platform = options.platform ?? process.platform
+  // Linux build: Godot integration is not supported yet; run without managed Godot launchers.
+  if (platform === 'linux') return { ...environment, GODOT_RUNTIME_ROOT: options.root, GODOT_RUNTIME_RESOURCES: options.source }
   if (!['darwin', 'win32'].includes(platform)) throw new Error(`Godot desktop integration does not support ${platform}`)
   for (const path of [options.source, options.root, options.primaryRuntime]) {
     if (!isAbsolute(path)) throw new Error('Godot runtime directories must be absolute')
