@@ -32,7 +32,7 @@ for target, platform, extension in [('mac-arm64', 'macOS-arm64', 'dmg'), ('mac-x
         assert digest == 'sha256:' + hashlib.file_digest(archive.open('rb'), 'sha256').hexdigest()
     asset = out / f'OpenGameGen-{platform}.{extension}'
     with zipfile.ZipFile(archive) as zipped:
-        installers = [n for n in zipped.namelist() if n.lower().endswith('.' + extension)]
+        installers = [n for n in zipped.namelist() if n.lower().endswith('.' + extension.lower())]
         assert len(installers) == 1
         with zipped.open(installers[0]) as inp, asset.open('wb') as dst:
             import shutil
