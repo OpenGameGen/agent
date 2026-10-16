@@ -49,7 +49,7 @@ notes = '\n'.join([
     '- Linux x64：OpenGameGen-Linux-x64.AppImage',
     '',
     '这些安装包未签名；macOS 未公证。版本仍为 alpha 预览版。',
-    'Linux 包为 AppImage；当前构建未启用 Godot 集成，且未配置 Linux 桌面图标。',
+    'Linux 包为 AppImage；当前构建未启用 Godot 集成，未配置 Linux 桌面图标，且未验证 LibreOffice 文档转换。',
     '本次已通过四个原生平台的 CI 打包及包内运行检查；尚未完成真实桌面安装交互验收。',
     '',
     f'构建来源：https://github.com/{repo}/actions/runs/{run_id}',
